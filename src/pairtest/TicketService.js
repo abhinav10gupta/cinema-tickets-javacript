@@ -1,7 +1,7 @@
 const InvalidPurchaseException = require('./lib/InvalidPurchaseException.js').default;
 const TicketPaymentService = require('../thirdparty/paymentgateway/TicketPaymentService.js').default;
 const SeatReservationService = require('../thirdparty/seatbooking/SeatReservationService.js').default;
-
+const {CONSTANTS, PRICES} = require('./config/cinemaRules.js');
 export default class TicketService {
     /**
    * Should only have private methods other than the one below.
@@ -85,7 +85,6 @@ export default class TicketService {
   }
 
   #validateBusinessRules(totals) {
-    const MAX_TICKETS = 25;
 
     const totalTickets = totals.ADULT + totals.CHILD + totals.INFANT;
 
@@ -99,20 +98,14 @@ export default class TicketService {
       );
     }
 
-    if (totalTickets > MAX_TICKETS) {
+    if (totalTickets > CONSTANTS.MAX_TICKETS) {
       throw new InvalidPurchaseException(
-        `Cannot purchase more than ${MAX_TICKETS} tickets.`
+        `Cannot purchase more than ${CONSTANTS.MAX_TICKETS} tickets.`
       );
     }
   }
 
   #calculateAmount(totals) {
-    const PRICES = ({
-      INFANT: 0,
-      CHILD: 15,
-      ADULT: 25
-    });
-
     return totals.ADULT * PRICES.ADULT + totals.CHILD * PRICES.CHILD;
   }
 
