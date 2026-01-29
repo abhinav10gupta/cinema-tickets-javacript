@@ -14,7 +14,7 @@ export default class TicketService {
     this.seatService = new SeatReservationService();
   }
 
-  purchaseTickets(accountId, ...ticketTypeRequests) {
+  async purchaseTickets(accountId, ...ticketTypeRequests) {
     this.#validateAccountId(accountId);
 
     const requests = this.#normalizeRequests(ticketTypeRequests);
@@ -24,9 +24,31 @@ export default class TicketService {
 
     const totalAmount = this.#calculateAmount(totals);
     const totalSeats = this.#calculateSeats(totals);
+    try{
+      await Promise.all([
+        this.#processPayment(accountId, totalAmount),
+        this.#processReservation(accountId, totalSeats)
+      ]);
+    }
+    catch(error){
+      this.#handleExternalServiceFailure(error, accountId);
 
-    this.paymentService.makePayment(accountId, totalAmount);
-    this.seatService.reserveSeat(accountId, totalSeats);
+    }
+  }
+
+  async #processPayment(accountId, amount){
+    return this.paymentService.makePayment(accountId, amount);
+  }
+
+  async #processReservation(accountId, seats){
+    return this.seatService.reserveSeat(accountId, seats);
+  }
+
+  #handleExternalServiceFailure(error, accountId){
+    console.error(`Transaction Failed for AccountId: ${accountId} :: ErrorMessage -`, error.message);
+    throw new InvalidPurchaseException(
+      'Payment or Reservation failed. Please try again later or contact support.'
+    );
   }
 
   #validateAccountId(accountId) {
