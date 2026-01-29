@@ -18,6 +18,9 @@ export default class TicketTypeRequest {
 
     this.#type = type;
     this.#noOfTickets = noOfTickets;
+
+    // Make this instance fully immutable
+    Object.freeze(this);
   }
 
   getNoOfTickets() {
@@ -27,6 +30,7 @@ export default class TicketTypeRequest {
   getTicketType() {
     return this.#type;
   }
+
 
   #Type = ['ADULT', 'CHILD', 'INFANT'];
 }
