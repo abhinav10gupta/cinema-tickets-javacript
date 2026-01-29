@@ -16,13 +16,15 @@ Open your terminal and run the following command to clone the project:
 
 
 ### Step 2: Install Dependencies
-cd cinema-tickets-javacript
-npm i
+`cd cinema-tickets-javacript`
+`npm i`
 
 
 ### Step 3: Run all Test Cases
-npm run test
+`npm run test`
 
+### Step 3: To check Code Coverage
+`npm run test:coverage`
 
 ### Business Rules Implemented 
 There are 3 types of tickets i.e. Infant, Child, and Adult.
